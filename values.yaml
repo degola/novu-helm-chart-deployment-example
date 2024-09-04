@@ -1,0 +1,132 @@
+api:
+  env:
+    ## @param api.env.API_ROOT_URL Define the required env for novu
+    ##
+    API_ROOT_URL: https://novu-api.<TLD>
+    ## @param api.env.DISABLE_USER_REGISTRATION If users should not be able to create new accounts. Possible values are: true, false
+    ##
+    DISABLE_USER_REGISTRATION: false
+    ## @param api.env.FRONT_BASE_URL The base url on which your frontend is accessible for the user. (e.g. dashboard.novu.co)
+    ##
+    FRONT_BASE_URL: https://novu.<TLD>
+  ingress:
+    ## @param api.ingress.enabled Enable ingress record generation for novu api
+    ##
+    enabled: true
+    ## @param api.ingress.hostname Default host for the ingress record
+    ##
+    hostname: novu-api.<TLD>
+
+
+ws:
+  ingress:
+    ## @param ws.ingress.enabled Enable ingress record generation for novu api
+    ##
+    enabled: true
+    ## @param ws.ingress.hostname Default host for the ingress record
+    ##
+    hostname: novu-ws.<TLD>
+
+web:
+  ## @param web.apiExternalEndpoint The external endpoint of the API
+  ##
+  apiExternalEndpoint: https://novu-api.<TLD>
+
+  ## @param web.wsExternalEndpoint The external websocket endpoint of the API
+  wsExternalEndpoint: wss://novu-ws.<TLD>
+
+  ingress:
+    ## @param web.ingress.enabled Enable ingress record generation for novu api
+    ##
+    enabled: true
+    ## @param web.ingress.hostname Default host for the ingress record
+    ##
+    hostname: novu.<TLD>
+
+## Enable persistence using Persistent Volume Claims
+## ref: https://kubernetes.io/docs/user-guide/persistent-volumes/
+##
+persistence:
+  ## @param persistence.enabled Enable persistence using Persistent Volume Claims
+  ##
+  enabled: true
+
+  ## @param persistence.storageClass Storage class of backing PVC
+  ## If defined, storageClassName: <storageClass>
+  ## If set to "-", storageClassName: "", which disables dynamic provisioning
+  ## If undefined (the default) or set to null, no storageClassName spec is
+  ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
+  ##   GKE, AWS & OpenStack)
+  ##
+  storageClass: 'longhorn'
+  ## @param persistence.size Size of data volume
+  ##
+  size: 8Gi
+
+
+##@section Secrets definition
+##
+existingSecret: ''
+jwt:
+  ## @param jwt.secret The secret keybase which is used to encrypt / verify the tokens issued for authentication
+  ## Please change this for production use !
+  ##
+  secret: <REPLACE ME WITH A RANDOMLY CREATED SECRET>
+
+store:
+  ## @param store.encryption-key The encryption key used to encrypt/decrypt provider credentials
+  ## Please change this for production use !
+  ##
+  encryptionKey: <REPLACE ME WITH A RANDOMLY CREATED SECRET>
+
+
+## @param mongodb.enabled Switch to enable or disable the MongoDB helm chart
+## @param mongodb.auth.enabled Enable auth for mongodb database
+## @param mongodb.auth.usernames Array of Name for custom users to create
+## @param mongodb.auth.passwords Array of Password for custom users to create
+## @param mongodb.auth.databases  Array of Name for custom databases to create
+## @param mongodb.architecture mongodb architecture (`standalone` or `replication`)
+## ref : https://docs.bitnami.com/kubernetes/infrastructure/mongodb/get-started/understand-architecture/
+mongodb:
+  enabled: true
+  architecture: standalone
+  auth:
+    enabled: true
+    usernames:
+      - novu_user
+    passwords:
+      - <REPLACE ME WITH A RANDOMLY CREATED SECRET> # you need to change this !
+    databases:
+      - novu_db
+
+## @section Redis configuration
+##
+
+## @param redis.enabled Switch to enable or disable the redis helm chart
+## ref : https://docs.bitnami.com/kubernetes/infrastructure/mongodb/get-started/understand-architecture/
+## @param redis.auth.enabled Enable auth for redis database
+## @param redis.auth.password password for redis database
+## @param redis.architecture redis architecture (`standalone` or `replication`)
+## refhttps://docs.bitnami.com/kubernetes/infrastructure/redis/get-started/understand-cluster-topologies/
+redis:
+  enabled: true
+  architecture: standalone
+  auth:
+    enabled: true
+    password: <REPLACE ME WITH A RANDOMLY CREATED SECRET> # you need to change this !
+
+## @param externalS3.endpoint Endpoint for external S3 storage access
+## @param externalS3.bucketName Bucket name for external S3 storage access
+## @param externalS3.region Region name for external S3 storage access
+## @param externalS3.accessKey access Key for external S3 storage access
+## @param externalS3.secretKey secret Key for external S3 storage access
+externalS3:
+  storageService: s3
+
+  ## S3, LOCALSTACK or GCS
+  ## for storageService: s3 and localstack
+  endpoint: https://<DOMAIN OF YOUR MINIO S3 ENDPOINT>
+  bucketName: novu
+  region: eu-fin
+  accessKey: <REPLACE ME WITH YOUR MINIO ACCESS KEY>
+  secretKey: <REPLACE ME WITH YOUR MINIO SECRET KEY>
